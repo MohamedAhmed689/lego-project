@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
+    <title>Hello App Engine</title>
+  </head>
+
+  <body onload='readLego();'>
+  <script>
+  function readLego(){
+		var xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function() {
+		  if (this.readyState == 4 && this.status == 200) {
+		   var lego=JSON.parse(this.responseText);
+		   document.getElementById("lego").innerHTML="Id="+lego.id+"<br>Name="+lego.name;
+		   document.getElementById("legoid").value=lego.id;
+		   
+		  }
+		};
+		
+		xhttp.open("GET","/rest/lego/getlego",true);
+		xhttp.send();	  
+  }
+  function sendData(form){
+		//Create a new Javascript object
+		var legoSetting=new Object();
+		legoSetting.speed=form.speed.value;
+		var lego=new Object();
+		lego.id=form.legoid.value;
+		legoSetting.lego=lego;
+		
+		var json=JSON.stringify(legoSetting);
+		var xhttp = new XMLHttpRequest();
+		
+		xhttp.onreadystatechange = function() {
+		  if (this.readyState == 4 && this.status == 200) {
+		   var settings=JSON.parse(this.responseText);
+		   document.getElementById("settings").innerHTML="ID="+settings.id+" Speed="+settings.speed;
+		  }
+		};
+		
+		xhttp.open("POST","/rest/lego/setvalues",true);
+		xhttp.setRequestHeader("Content-type","application/json");
+		xhttp.send(json);
+		legoSetting.direction = form.direction.value; // Assuming 'direction' is the name of the radio group
+		
+	}
+  function toggleStartStop(button){
+	    // Code to toggle the start and stop of the LEGO
+	    var currentValue = button.value;
+	    button.value = currentValue === "Start" ? "Stop" : "Start";
+	    // Implement the logic for starting or stopping the LEGO
+	  }
+  </script>
+     <h1>Lego Settings!</h1>
+    <h3>Lego</h3>
+    <p id='lego'></p>
+    <h3>New values</h3>
+   <form>
+      Id: <input id='legoid' type='text' name='legoid' readonly value=''><br> <!-- Added readonly attribute -->
+      Speed: <input type='text' name='speed' value=''><br>
+      Forward: <input type='radio' name='direction' value='Forward'><br>
+      Backward: <input type='radio' name='direction' value='Backward'><br>
+      <input type='button' name='ok' value='OK' onclick='sendData(this.form);'>
+    </form>
+    <h3>Start'n'stop button</h3> <!-- Added heading for start/stop button -->
+    <button onclick='toggleStartStop(this);' value='Start'>Start</button> <!-- Changed input to button element -->
+    <p id='settings'></p>
+  </body>
+</html>
