@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 // commed added by ahmed
 // second commit by ahmed 
 
-// not ok commit
+// now its ok
 @WebServlet(
     name = "HelloAppEngine",
     urlPatterns = {"/hello"}
